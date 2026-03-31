@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+playwright
+sqlalchemy
+apscheduler
+pydantic
+python-dotenv
+requests
+psycopg2-binary

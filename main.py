@@ -5,19 +5,18 @@ from routes import hotels, rates, insights
 
 app = FastAPI(title="Hotel Rate Intelligence API")
 
-# CORS - permite chamadas do frontend local
+# CORS - permite chamadas do frontend em produção e local
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://localhost:3005",
-        "http://localhost:4173",
-    ],
+    allow_origins=["*"], # Em produção, liberamos para o domínio do Easypanel
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup_event():
+    database.init_db()
 
 # Root endpoint
 @app.get("/")

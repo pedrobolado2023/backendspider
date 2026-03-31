@@ -88,4 +88,11 @@ class AIJobLog(Base):
 
     hotel = relationship("Hotel", back_populates="ai_logs")
 
-Base.metadata.create_all(bind=engine)
+def init_db():
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("Database tables initialized successfully.")
+    except Exception as e:
+        print(f"Warning: Could not initialize database tables: {e}")
+        # We don't raise the error here to allow the server to start
+        # so the user can see the logs or access non-DB routes.

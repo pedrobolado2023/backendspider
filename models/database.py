@@ -12,13 +12,20 @@ load_dotenv()
 # Use environment variable for database URL
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:35946800Pedro@db.ptkmfeinqmisluyljlyn.supabase.co:5432/postgres")
 
-# SQLAlchemy requires 'postgresql://' instead of 'postgres://' (standard for older Heroku/Supabase urls)
+# PostgreSQL URL cleanup
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
+# Ensure sslmode=require for cloud deployments if not already present
+if "sslmode=" not in DATABASE_URL:
+    separator = "&" if "?" in DATABASE_URL else "?"
+    DATABASE_URL += f"{separator}sslmode=require"
+
 engine = create_engine(
     DATABASE_URL,
-    pool_pre_ping=True
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=10
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
